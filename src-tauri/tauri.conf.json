@@ -1,0 +1,20 @@
+{
+  "productName": "Excel文件转换工具",
+  "version": "0.1.0",
+  "identifier": "com.xlsconvert.tool",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Excel 文件转换工具",
+        "width": 1000,
+        "height": 700,
+        "resizable": true,
+        "center": true
+      }
+    ]
+  }
+}

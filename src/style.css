@@ -1,0 +1,265 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #4a90d9;
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #3a7bc8;
+}
+
+.btn-success {
+  background: #52c41a;
+  color: #fff;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #43a814;
+}
+
+.file-path {
+  font-size: 13px;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+}
+
+.row-count {
+  font-size: 13px;
+  color: #666;
+}
+
+.status-msg {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.status-msg.hidden {
+  display: none;
+}
+
+.status-msg.success {
+  background: #f0fbe4;
+  color: #389e0d;
+  border: 1px solid #b7eb8f;
+}
+
+.status-msg.error {
+  background: #fff1f0;
+  color: #cf1322;
+  border: 1px solid #ffa39e;
+}
+
+.status-msg.loading {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.table-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  overflow: auto;
+  max-height: calc(100vh - 200px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th {
+  background: #fafafa;
+  border-bottom: 2px solid #e8e8e8;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #555;
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  word-break: break-all;
+}
+
+tbody tr:nth-child(even) {
+  background: #fafcff;
+}
+
+tbody tr:hover {
+  background: #e6f7ff;
+}
+
+.empty-hint {
+  text-align: center;
+  color: #bbb;
+  padding: 60px 12px;
+  font-size: 14px;
+}
+
+td:first-child,
+th:first-child {
+  color: #999;
+  text-align: center;
+  width: 40px;
+}
+
+/* 合并按钮样式 */
+.btn-warning {
+  background: #fa8c16;
+  color: #fff;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #d87a10;
+}
+
+/* 重复行分组高亮：6 组柔和背景色 + 左侧彩色竖条 */
+tr.dup-group-0 {
+  background: #fff7e6 !important;
+  border-left: 3px solid #fa8c16;
+}
+
+tr.dup-group-1 {
+  background: #e6f7ff !important;
+  border-left: 3px solid #1890ff;
+}
+
+tr.dup-group-2 {
+  background: #f6ffed !important;
+  border-left: 3px solid #52c41a;
+}
+
+tr.dup-group-3 {
+  background: #fff1f0 !important;
+  border-left: 3px solid #f5222d;
+}
+
+tr.dup-group-4 {
+  background: #f9f0ff !important;
+  border-left: 3px solid #722ed1;
+}
+
+tr.dup-group-5 {
+  background: #e6fffb !important;
+  border-left: 3px solid #13c2c2;
+}
+
+.mapping-panel {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.mapping-panel h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.field-mapping {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.field-mapping label {
+  min-width: 100px;
+  font-size: 13px;
+  color: #555;
+}
+
+.mapping-controls {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.column-select {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.operation-select {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 12px;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Excel 文件转换工具</title>
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Excel 文件转换工具</h1>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button id="btn-select" class="btn btn-primary">选择源文件</button>
+        <span id="file-path" class="file-path">未选择文件</span>
+      </div>
+      <div class="toolbar-right">
+        <span id="row-count" class="row-count"></span>
+        <button id="btn-merge" class="btn btn-warning" style="display:none">合并重复项</button>
+        <button id="btn-export" class="btn btn-success" disabled>导出文件</button>
+      </div>
+    </div>
+
+    <div id="status-msg" class="status-msg hidden"></div>
+
+    <div id="mapping-panel" class="mapping-panel" style="display:none">
+      <h3>列映射配置</h3>
+      <div id="mapping-fields"></div>
+      <button id="btn-apply-mapping" class="btn btn-primary">应用配置并转换</button>
+      <button id="btn-cancel-mapping" class="btn">取消</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="preview-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>收件人姓名</th>
+            <th>收件人手机号</th>
+            <th>收货地址</th>
+            <th>商品名称</th>
+            <th>商品规格</th>
+            <th>商品数量</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr>
+            <td colspan="8" class="empty-hint">请选择源 Excel 文件进行转换</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="src/main.js" type="module"></script>
+</body>
+</html>
