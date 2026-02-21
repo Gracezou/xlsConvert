@@ -7,7 +7,54 @@ on:
   workflow_dispatch:
 
 jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    outputs:
+      release_body: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # 获取上一个 tag
+          PREV_TAG=$(git tag --sort=-creatordate | sed -n '2p')
+          if [ -z "$PREV_TAG" ]; then
+            # 没有上一个 tag，使用所有提交
+            COMMITS=$(git log --pretty=format:"- %s (%h)" ${{ github.ref_name }})
+          else
+            COMMITS=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..${{ github.ref_name }})
+          fi
+
+          # 分类提交
+          FEATURES=$(echo "$COMMITS" | grep -iE "^- feat" || true)
+          FIXES=$(echo "$COMMITS" | grep -iE "^- fix" || true)
+          OTHERS=$(echo "$COMMITS" | grep -viE "^- (feat|fix)" || true)
+
+          # 构建 changelog
+          CHANGELOG=""
+          if [ -n "$FEATURES" ]; then
+            CHANGELOG="${CHANGELOG}### ✨ 新功能\n${FEATURES}\n\n"
+          fi
+          if [ -n "$FIXES" ]; then
+            CHANGELOG="${CHANGELOG}### 🐛 修复\n${FIXES}\n\n"
+          fi
+          if [ -n "$OTHERS" ]; then
+            CHANGELOG="${CHANGELOG}### 📦 其他\n${OTHERS}\n\n"
+          fi
+
+          # 写入 output（处理多行）
+          {
+            echo "changelog<<EOF"
+            echo -e "$CHANGELOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
   build:
+    needs: changelog
     strategy:
       fail-fast: false
       matrix:
@@ -55,6 +102,6 @@ jobs:
           args: --target ${{ matrix.target }}
           tagName: ${{ github.ref_name }}
           releaseName: 'v__VERSION__'
-          releaseBody: 'Excel 文件转换工具 v__VERSION__'
+          releaseBody: ${{ needs.changelog.outputs.release_body }}
           releaseDraft: true
           prerelease: false
