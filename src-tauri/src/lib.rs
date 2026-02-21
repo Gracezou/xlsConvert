@@ -1,4 +1,4 @@
-mod excel;
+pub mod excel;
 
 use excel::{ConversionResult, ConvertedRow, ColumnInfo, ColumnMapping};
 use std::sync::Mutex;

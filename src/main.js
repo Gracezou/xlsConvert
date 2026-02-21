@@ -130,11 +130,15 @@ btnSelect.addEventListener("click", async () => {
     showStatus("正在读取列信息...", "loading");
     btnSelect.disabled = true;
 
+    console.log("Calling read_columns with path:", selected);
     availableColumns = await invoke("read_columns", { path: selected });
+    console.log("Received columns:", availableColumns.length);
     renderMappingPanel();
     mappingPanel.style.display = "block";
+    console.log("Mapping panel display set to block");
     showStatus("请配置列映射", "success");
   } catch (err) {
+    console.error("Error:", err);
     showStatus("读取失败: " + err, "error");
   } finally {
     btnSelect.disabled = false;

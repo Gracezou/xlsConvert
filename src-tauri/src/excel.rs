@@ -73,6 +73,7 @@ fn index_to_column_code(index: usize) -> String {
 }
 
 pub fn read_columns(path: &str) -> Result<Vec<ColumnInfo>, String> {
+    println!("[DEBUG] read_columns called with path: {}", path);
     let mut workbook: Xlsx<_> = open_workbook(path).map_err(|e| format!("无法打开文件: {}", e))?;
     let sheet_names = workbook.sheet_names().to_vec();
     if sheet_names.is_empty() {
@@ -90,6 +91,7 @@ pub fn read_columns(path: &str) -> Result<Vec<ColumnInfo>, String> {
             });
         }
     }
+    println!("[DEBUG] read_columns returning {} columns", columns.len());
     Ok(columns)
 }
 
@@ -210,11 +212,6 @@ pub fn read_and_convert(path: &str) -> Result<ConversionResult, String> {
     mappings.insert("remarks".to_string(), ColumnMapping { source_indices: vec![0], operation: "concat".to_string() });
     
     read_and_convert_with_mapping(path, mappings)
-}
-
-// 保留原有排序逻辑
-fn sort_and_mark_duplicates(rows: &mut Vec<ConvertedRow>) -> (bool, usize) {
-    (false, 0)
 }
 
 pub fn merge_duplicates(rows: &[ConvertedRow]) -> Vec<ConvertedRow> {
