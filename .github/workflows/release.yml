@@ -61,10 +61,13 @@ jobs:
         include:
           - platform: macos-latest
             target: aarch64-apple-darwin
+            bundles: dmg
           - platform: macos-latest
             target: x86_64-apple-darwin
+            bundles: dmg
           - platform: windows-latest
             target: x86_64-pc-windows-msvc
+            bundles: nsis
 
     runs-on: ${{ matrix.platform }}
 
@@ -99,7 +102,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tauriScript: npx tauri
-          args: --target ${{ matrix.target }}
+          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
           tagName: ${{ github.ref_name }}
           releaseName: 'v__VERSION__'
           releaseBody: ${{ needs.changelog.outputs.release_body }}
