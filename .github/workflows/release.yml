@@ -7,10 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  changelog:
+  create-release:
     runs-on: ubuntu-latest
     outputs:
-      release_body: ${{ steps.changelog.outputs.changelog }}
+      release_id: ${{ steps.create.outputs.id }}
+      release_upload_url: ${{ steps.create.outputs.upload_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,21 +21,17 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          # 获取上一个 tag
           PREV_TAG=$(git tag --sort=-creatordate | sed -n '2p')
           if [ -z "$PREV_TAG" ]; then
-            # 没有上一个 tag，使用所有提交
-            COMMITS=$(git log --pretty=format:"- %s (%h)" ${{ github.ref_name }})
+            COMMITS=$(git log --pretty=format:"- %s (%h)")
           else
-            COMMITS=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..${{ github.ref_name }})
+            COMMITS=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..HEAD)
           fi
 
-          # 分类提交
           FEATURES=$(echo "$COMMITS" | grep -iE "^- feat" || true)
           FIXES=$(echo "$COMMITS" | grep -iE "^- fix" || true)
           OTHERS=$(echo "$COMMITS" | grep -viE "^- (feat|fix)" || true)
 
-          # 构建 changelog
           CHANGELOG=""
           if [ -n "$FEATURES" ]; then
             CHANGELOG="${CHANGELOG}### ✨ 新功能\n${FEATURES}\n\n"
@@ -46,15 +43,25 @@ jobs:
             CHANGELOG="${CHANGELOG}### 📦 其他\n${OTHERS}\n\n"
           fi
 
-          # 写入 output（处理多行）
           {
             echo "changelog<<EOF"
             echo -e "$CHANGELOG"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Create Release
+        id: create
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
-    needs: changelog
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
@@ -97,14 +104,15 @@ jobs:
         run: mkdir -p dist && cp index.html dist/ && cp -r src dist/
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+        run: npx tauri build --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+
+      - name: Upload artifacts to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          draft: true
+          files: |
+            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.dmg
+            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tauriScript: npx tauri
-          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
-          tagName: ${{ github.ref_name }}
-          releaseName: 'v__VERSION__'
-          releaseBody: ${{ needs.changelog.outputs.release_body }}
-          releaseDraft: true
-          prerelease: false
